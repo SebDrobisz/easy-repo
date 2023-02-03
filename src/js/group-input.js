@@ -34,6 +34,7 @@ function checkGroup() {
         searchGroup(groupname)
             .then(g => {
                 groupnameIDElement().textContent = g.id
+                fillGroupSelect();
                 display(groupnameIDElement());
             })
             .catch(error => {

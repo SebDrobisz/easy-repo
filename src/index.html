@@ -8,14 +8,15 @@
     <script src="js/gitlab/user.js"></script>
     <script src="js/gitlab/group.js"></script>
     <script src="js/gitlab/project.js"></script>
+    <script src="js/data.js"></script>
     <script src="js/style.js"></script>
     <script src="js/token-input.js"></script>
     <script src="js/init.js"></script>
     <script src="js/index.js"></script>
+    <script src="js/group-select-input.js"></script>
     <script src="js/group-input.js"></script>
     <script src="js/access-lvl-input.js"></script>
     <script src="js/projects-builder.js"></script>
-    <script src="js/data/groups.js"></script>
     <link rel="stylesheet" href="style/index.css">
     <title>Scripts - Esi-gitlab-script</title>
 </head>
@@ -59,6 +60,8 @@
                             id="postfix" name="postfix" type="text" placeholder="-i1">
                     </div>
                 </div>
+                <p>Nom des projets : <span id="preview">...</span></p>
+
                 <div id="matricule-line">
                     <label for="matricules">Matricules :</label>
                     <div id="data-loader">
@@ -107,10 +110,28 @@
     </div>
     <div id="test-div"></div>
     <script>
+
         initGroupnameInput();
         initAccessLevelInput();
         initTokenInput();
         const track = new Map();
+
+        function getProjectsName(matricule) {
+            const prefixValue = document.getElementById("prefix").value;
+            const postfixValue = document.getElementById("postfix").value;
+            return `${prefixValue}${matricule}${postfixValue}`;
+        }
+        
+        [
+            document.getElementById("prefix"),
+            document.getElementById("postfix")
+        ].forEach(e => {
+            e.addEventListener("input", () => {
+            const previewE = document.getElementById("preview");
+            previewE.textContent = getProjectsName("12345");
+            });
+        });
+
 
         initProjectSBuilderButton(
             () => document.getElementById("prefix"),
@@ -128,41 +149,9 @@
             navigator.clipboard.writeText(lines.join("\n"));
         });
 
-        // loader draft
         const ueSelectElement = document.getElementById("ue-select");
-        ues().forEach(ue => {
-            const optionElement = document.createElement("option");
-            optionElement.setAttribute("value", ue);
-            optionElement.innerText = ue;
-            ueSelectElement.append(optionElement);
-        })
-        
         const groupSelectElement = document.getElementById("group-select");
-        function fillGroupOptions(ue) {
-            groupSelectElement.innerHTML = "";
-
-            ueGroups(ue).forEach(group => {
-                const optionElement = document.createElement("option");
-                optionElement.setAttribute("value", group);
-                optionElement.innerText = group;
-                groupSelectElement.append(optionElement);
-            });
-        }
         const checkboxGroup = document.getElementById("checkbox-group");
-        checkboxGroup.addEventListener("change", () => {
-            if (checkboxGroup.checked) {
-                groupSelectElement.classList.remove("hidden");
-                fillGroupOptions(ueSelectElement.value);
-            } else {
-                groupSelectElement.classList.add("hidden");
-            }
-        })
-
-        ueSelectElement.addEventListener("change", () => {
-            if (checkboxGroup.checked) {
-                fillGroupOptions(ueSelectElement.value);
-            }
-        });
 
         
         document.getElementById("loader-button").addEventListener("click", () => {
@@ -172,7 +161,6 @@
             if (checkboxGroup.checked) {
                 matricules = getMatricules(ueSelectElement.value, groupSelectElement.value);
                 console.log(ueSelectElement.value);
-                console.log(groupSelectElement.value);
                 console.log(matricules);
             } else {
                 matricules = getMatricules(ueSelectElement.value);
@@ -184,3 +172,9 @@
     </script>
 </body>
 </html>
+<!-- TODO : 
+    lorsqu'on clique sur le groupe sans qu'il y ait de token,
+    le pointer retourne automatiquement sur l'input groupe
+    empêchant la modification de l'input Token. Oauth
+    corrigera ce problème.
+-->

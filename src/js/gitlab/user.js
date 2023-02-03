@@ -22,7 +22,6 @@ async function addMember(projectId, username, lvl) {
     const requestPathname = `/projects/${projectId}/members`;
     const url = requestURL(requestPathname);
 
-    console.log("access lvl" + lvl);
     const attributs = {
         user_id: userId,
         access_level: lvl,

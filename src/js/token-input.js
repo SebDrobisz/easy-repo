@@ -21,9 +21,8 @@ function isFilledToken() {
 }
 
 function initTokenInput() {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-        tokenElement().value = storedToken;
+    if ("token" in localStorage) {
+        tokenElement().value = localStorage.getItem("token");
     }
     tokenElement().addEventListener("focusout", () => {
         localStorage.setItem("token", tokenElement().value);
